@@ -552,8 +552,12 @@
 
 			ILProcessor processor = methodDefinition.Body.GetILProcessor();
 
-			// Generate CacheKeyTemplate
-			string cacheKey = CreateCacheKeyString(methodDefinition);
+			// Generate CacheKeyTemplate Or using Special CacheKey
+			CustomAttributeNamedArgument cusAttrArg = attribute.Properties.FirstOrDefault(findKey => findKey.Name.ToLower() == "cachekey");
+
+			string cacheKey = !string.IsNullOrEmpty(cusAttrArg.Name) ? (string.IsNullOrEmpty(cusAttrArg.Argument.Value.ToString()) ? CreateCacheKeyString(methodDefinition) : cusAttrArg.Argument.Value.ToString()) : CreateCacheKeyString(methodDefinition);
+
+
 
 			Instruction current = firstInstruction.Prepend(processor.Create(OpCodes.Ldstr, cacheKey), processor);
 
@@ -569,11 +573,11 @@
 			}
 
 			MethodReference methodReferenceContain =
-				methodDefinition.Module.Import(CacheTypeGetContainsMethod(propertyGetReturnTypeDefinition,
+				methodDefinition.Module.ImportReference(CacheTypeGetContainsMethod(propertyGetReturnTypeDefinition,
 					CacheTypeContainsMethodName));
 
 			current = current
-				.Append(processor.Create(OpCodes.Call, methodDefinition.Module.Import(propertyGet)), processor)
+				.Append(processor.Create(OpCodes.Call, methodDefinition.Module.ImportReference(propertyGet)), processor)
 				.AppendLdloc(processor, cacheKeyIndex)
 				.Append(processor.Create(OpCodes.Callvirt, methodReferenceContain), processor)
 				.Append(processor.Create(OpCodes.Brfalse, firstInstruction), processor);
@@ -594,10 +598,10 @@
 				}
 
 				MethodReference methodReferenceStore =
-					methodDefinition.Module.Import(CacheTypeGetStoreMethod(propertyGetReturnTypeDefinition, CacheTypeStoreMethodName));
+					methodDefinition.Module.ImportReference(CacheTypeGetStoreMethod(propertyGetReturnTypeDefinition, CacheTypeStoreMethodName));
 
 				returnInstruction.Previous
-					.Append(processor.Create(OpCodes.Call, methodDefinition.Module.Import(propertyGet)), processor)
+					.Append(processor.Create(OpCodes.Call, methodDefinition.Module.ImportReference(propertyGet)), processor)
 					.AppendLdloc(processor, cacheKeyIndex)
 					.AppendLdloc(processor, resultIndex)
 					.AppendBoxIfNecessary(processor, methodDefinition.ReturnType);
@@ -607,7 +611,7 @@
 				{
 					returnInstruction.Previous
 						.Append(processor.Create(OpCodes.Newobj,
-							methodDefinition.Module.Import(References.DictionaryConstructor)), processor);
+							methodDefinition.Module.ImportReference(References.DictionaryConstructor)), processor);
 
 					foreach (CustomAttributeNamedArgument property in attribute.Properties.Union(attribute.Fields))
 					{
@@ -618,7 +622,7 @@
 							.AppendBoxIfNecessary(processor,
 								property.Argument.Type != ModuleDefinition.TypeSystem.Object
 									? property.Argument.Type : ((CustomAttributeArgument)property.Argument.Value).Type)
-							.Append(processor.Create(OpCodes.Callvirt, methodDefinition.Module.Import(References.DictionaryAddMethod)),
+							.Append(processor.Create(OpCodes.Callvirt, methodDefinition.Module.ImportReference(References.DictionaryAddMethod)),
 								processor);
 					}
 				}
@@ -640,10 +644,10 @@
 
 			// Start of branche true
 			MethodReference methodReferenceRetrieve =
-				methodDefinition.Module.Import(CacheTypeGetRetrieveMethod(propertyGetReturnTypeDefinition,
+				methodDefinition.Module.ImportReference(CacheTypeGetRetrieveMethod(propertyGetReturnTypeDefinition,
 					CacheTypeRetrieveMethodName)).MakeGeneric(new[] { methodDefinition.ReturnType });
 
-			current.Append(processor.Create(OpCodes.Call, methodDefinition.Module.Import(propertyGet)), processor)
+			current.Append(processor.Create(OpCodes.Call, methodDefinition.Module.ImportReference(propertyGet)), processor)
 				.AppendLdloc(processor, cacheKeyIndex)
 				.Append(processor.Create(OpCodes.Callvirt, methodReferenceRetrieve), processor)
 				.AppendStloc(processor, resultIndex)
@@ -747,9 +751,9 @@
 			}
 
 			current
-				.Append(processor.Create(OpCodes.Call, setter.Module.Import(propertyGet)), processor)
+				.Append(processor.Create(OpCodes.Call, setter.Module.ImportReference(propertyGet)), processor)
 				.AppendLdloc(processor, cacheKeyIndex)
-				.Append(processor.Create(OpCodes.Callvirt, setter.Module.Import(
+				.Append(processor.Create(OpCodes.Callvirt, setter.Module.ImportReference(
 					CacheTypeGetRemoveMethod(propertyGet.ReturnType.Resolve(), CacheTypeRemoveMethodName))), processor);
 
 			setter.Body.OptimizeMacros();

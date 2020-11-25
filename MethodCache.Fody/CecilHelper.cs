@@ -195,7 +195,7 @@
 					return
 						instruction
 							.Append(processor.Create(OpCodes.Ldtoken, (TypeReference)argument.Value), processor)
-							.Append(processor.Create(OpCodes.Call, references.ModuleDefinition.Import(
+							.Append(processor.Create(OpCodes.Call, references.ModuleDefinition.ImportReference(
 								references.SystemTypeGetTypeFromHandleMethod)), processor);
 
 				default:
@@ -273,12 +273,12 @@
 
 		public static MethodReference ImportMethod(this ModuleDefinition module, MethodDefinition methodDefinition)
 		{
-			return module.Import(methodDefinition);
+			return module.ImportReference(methodDefinition);
 		}
 
 		public static VariableDefinition ImportVariable(this ModuleDefinition module, TypeReference typeReference)
 		{
-			return new VariableDefinition(module.Import(typeReference));
+			return new VariableDefinition(module.ImportReference(typeReference));
 		}
 
 		public static bool IsEqualTo<T>(this IEnumerable<T> collection, IEnumerable<T> collectionToCompare)
