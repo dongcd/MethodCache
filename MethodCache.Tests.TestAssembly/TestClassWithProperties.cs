@@ -2,9 +2,10 @@
 {
 	using MethodCache.Attributes;
 	using MethodCache.Tests.TestAssembly.Cache;
+    using CacheAttribute = Cache.CacheAttribute;
 
-	[Attributes.Cache]
-	public class TestClassWithProperties
+    //[Attributes.Cache]
+    public class TestClassWithProperties
 	{
 		private string field;
 
@@ -34,6 +35,7 @@
 		}
 
 		// ReSharper disable once ConvertToAutoProperty
+		[Cache(CacheKey = "redis.property.cachekey")]
 		public int ReadWriteProperty
 		{
 			get { return someValue; }

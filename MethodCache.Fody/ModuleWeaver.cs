@@ -27,6 +27,8 @@
 
 		public const string NoCacheAttributeName = "NoCacheAttribute";
 
+		public const string CacheAttributeSpecialKeyName = "CacheKey";
+
 		public ModuleWeaver()
 		{
 			LogInfo = m => { };
@@ -553,7 +555,7 @@
 			ILProcessor processor = methodDefinition.Body.GetILProcessor();
 
 			// Generate CacheKeyTemplate Or using Special CacheKey
-			CustomAttributeNamedArgument cusAttrArg = attribute.Properties.FirstOrDefault(findKey => findKey.Name.ToLower() == "cachekey");
+			CustomAttributeNamedArgument cusAttrArg = attribute.Properties.FirstOrDefault(findKey => findKey.Name.ToLower() == CacheAttributeSpecialKeyName.ToLower());
 
 			string cacheKey = !string.IsNullOrEmpty(cusAttrArg.Name) ? (string.IsNullOrEmpty(cusAttrArg.Argument.Value.ToString()) ? CreateCacheKeyString(methodDefinition) : cusAttrArg.Argument.Value.ToString()) : CreateCacheKeyString(methodDefinition);
 
@@ -732,6 +734,8 @@
 
 			// Generate CacheKeyTemplate
 			string cacheKey = CreateCacheKeyString(setter);
+
+			//setter.CustomAttributes.FirstOrDefault(findAttr => findAttr.Properties.FirstOrDefault(findPro => findPro.Name.ToLower() == CacheAttributeSpecialKeyName.ToLower()));
 
 			Instruction current = firstInstruction.Prepend(processor.Create(OpCodes.Ldstr, cacheKey), processor);
 

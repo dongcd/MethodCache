@@ -11,5 +11,10 @@
 		public bool Parameter3 { get; set; }
 
 		public double parameter3;
-	}
+
+		/// <summary>
+		/// Special Cache Key
+		/// </summary>
+        public string CacheKey { get; set; }
+    }
 }
