@@ -1,6 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\MethodCache.Fody",
+    "\\MethodCache.Tests",
+    "\\MethodCache.Tests.TestAssembly",
+    "\\MethodCache.Tests.TestAssembly\\Cache"
   ],
+  "SelectedNode": "\\MethodCache.Fody\\ModuleWeaver.cs",
   "PreviewInSolutionExplorer": false
 }

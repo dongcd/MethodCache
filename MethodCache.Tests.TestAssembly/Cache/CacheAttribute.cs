@@ -13,8 +13,8 @@
 		public double parameter3;
 
 		/// <summary>
-		/// Special Cache Key
+		/// Special Cache Key Prefix
 		/// </summary>
-        public string CacheKey { get; set; }
+        public string CacheKeyPrefix { get; set; }
     }
 }
