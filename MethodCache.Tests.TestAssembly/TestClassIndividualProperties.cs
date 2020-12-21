@@ -26,7 +26,7 @@
 			get { return "some value"; }
 		}
 
-		[Cache(CacheKey = "mycachekey.readwriteproperty")]
+		[Cache(CacheKeyPrefix = "mycachekey.readwriteproperty")]
 
 		// ReSharper disable once ConvertToAutoProperty
 		public int ReadWriteProperty

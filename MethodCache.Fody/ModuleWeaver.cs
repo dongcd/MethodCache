@@ -96,6 +96,11 @@
 
             if (methodDefinition.IsSpecialName && (methodDefinition.IsSetter || methodDefinition.IsGetter))
             {
+                if (!string.IsNullOrEmpty(CacheKeyPrefix))
+                {
+                    builder.Clear();
+                    builder.Append(CacheKeyPrefix);
+                }
                 builder.Append(Regex.Replace(methodDefinition.Name, "[gs]et_", string.Empty));
             }
             else

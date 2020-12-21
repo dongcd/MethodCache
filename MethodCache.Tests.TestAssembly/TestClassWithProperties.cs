@@ -35,7 +35,7 @@
 		}
 
 		// ReSharper disable once ConvertToAutoProperty
-		[Cache(CacheKey = "redis.property.cachekey")]
+		[Cache(CacheKeyPrefix = "redis.property.cachekey")]
 		public int ReadWriteProperty
 		{
 			get { return someValue; }

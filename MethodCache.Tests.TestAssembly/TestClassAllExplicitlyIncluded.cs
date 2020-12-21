@@ -2,8 +2,9 @@
 {
 	using MethodCache.Attributes;
 	using MethodCache.Tests.TestAssembly.Cache;
+    using CacheAttribute = Cache.CacheAttribute;
 
-	[Attributes.Cache(Members.All)]
+    [Attributes.Cache(Members.All)]
 	public class TestClassAllExplicitlyIncluded
 	{
 		public TestClassAllExplicitlyIncluded(ICache cache)
@@ -13,6 +14,7 @@
 
 		public ICache Cache { get; private set; }
 
+		[Cache(CacheKeyPrefix="G:BaseData:")]
 		public string Property
 		{
 			get { return "some value"; }
